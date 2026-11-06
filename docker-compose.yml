@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: datacore
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-datacore}
+      POSTGRES_DB: datacore
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U datacore -d datacore"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  pgdata:
