@@ -31,3 +31,4 @@ Modules for later milestones are intentionally not stubbed.
 * `daily_prices` unique on (security, date, price_type) – raw and adjusted series are separate.
 * `raw_data_files` unique on (source, SHA-256) – basis for idempotent re-imports.
 * Enums are VARCHAR + CHECK constraints (easy to evolve). Universe snapshots default to completeness `UNKNOWN`.
+"# atlas-datacore" 
