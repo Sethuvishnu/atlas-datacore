@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app import __version__
-from app.api.routes import health
+from app.api.routes import health, sources
 from app.config.logging import configure_logging, get_logger
 from app.config.settings import get_settings
 
@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     app = FastAPI(title="ATLAS DataCore", version=__version__, lifespan=lifespan)
     app.include_router(health.router, prefix="/api/v1")
+    app.include_router(sources.router, prefix="/api/v1")
     return app
 
 

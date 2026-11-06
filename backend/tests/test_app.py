@@ -22,7 +22,7 @@ def test_health_ok_with_migrated_db(client):
     body = r.json()
     assert body["status"] == "ok"
     assert body["database"]["connected"] is True
-    assert body["database"]["migration_revision"] == "0001"
+    assert body["database"]["migration_revision"] == "0002"
     assert body["database"]["missing_tables"] == []
 
 
@@ -62,3 +62,20 @@ def test_settings_read_environment(monkeypatch):
     s = Settings()
     assert s.database_url.endswith("@h:5432/d")
     assert s.is_local is False
+
+
+def test_sources_endpoint_lists_seeded_sources_without_claiming_coverage(client, engine):
+    from sqlalchemy.orm import Session
+    from app.sources.registry import seed_sources
+    with Session(engine) as s:
+        seed_sources(s)
+        s.commit()
+    try:
+        body = client.get("/api/v1/sources").json()
+        assert body["count"] >= 7
+        assert all(x["historical_coverage"].startswith("UNVERIFIED") for x in body["sources"])
+        assert all(x["reliability_status"] == "UNASSESSED" for x in body["sources"])
+    finally:
+        with Session(engine) as s:
+            s.execute(__import__("sqlalchemy").text("DELETE FROM data_source_registry"))
+            s.commit()

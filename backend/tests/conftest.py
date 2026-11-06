@@ -68,3 +68,9 @@ def security(session):
     session.add(sec)
     session.flush()
     return sec
+
+
+@pytest.fixture()
+def store(tmp_path):
+    from app.storage.raw_store import RawFileStore
+    return RawFileStore(tmp_path / "data", max_bytes=1024 * 1024)

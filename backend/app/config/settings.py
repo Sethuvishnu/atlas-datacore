@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_json: bool = False
     data_dir: Path = PROJECT_ROOT / "data"
+    # Raw file intake limits (M2). Bhavcopy ZIPs are small; these are generous ceilings.
+    max_upload_bytes: int = 250 * 1024 * 1024
+    max_zip_uncompressed_bytes: int = 2 * 1024 * 1024 * 1024
+    max_zip_ratio: int = 500  # total uncompressed / compressed; above this is treated as a zip bomb
+    max_zip_members: int = 10_000
     # Enforced for non-local deployments when the API milestone lands.
     api_key: str | None = None
 
